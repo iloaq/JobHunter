@@ -1,10 +1,12 @@
+#from curses import termattrs
 import math
+from pickle import TRUE
 import tkinter as tk
 from tkinter import Menu, ttk
 from tkinter.messagebox import NO
 from turtle import width
 from date.database import DB
-import textwrap
+
 
 class Main(tk.Frame):
     def __init__(self, root):
@@ -18,34 +20,35 @@ class Main(tk.Frame):
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
         self.add_logo = tk.PhotoImage(file='assets/images/logo.gif')
-        btn_logo = tk.Button(toolbar, bg='#d7d8e0', bd=0,
+        btn_logo = tk.Label(toolbar, bg='#d7d8e0', bd=0,
                                     compound=tk.TOP, image=self.add_logo)
         btn_logo.pack(side=tk.LEFT)
 
-        self.add_img = tk.PhotoImage(file='assets/images/add.gif')
-        btn_open_dialog = tk.Button(toolbar, text='Добавить объявление', command=self.open_dialog, bg='#d7d8e0', bd=0,
-                                    compound=tk.TOP, image=self.add_img)
-        btn_open_dialog.pack(side=tk.RIGHT)
+        self.delete_img = tk.PhotoImage(file='assets/images/delete.gif')
+        btn_delete = tk.Button(toolbar, text='Удалить объявление   ', bg='#d7d8e0', bd=0, image=self.delete_img,
+                               compound=tk.TOP, command=self.delete_records)
+        btn_delete.pack(side=tk.RIGHT)
 
         self.update_img = tk.PhotoImage(file='assets/images/update.gif')
         btn_edit_dialog = tk.Button(toolbar, text='   Редактировать  ', bg='#d7d8e0', bd=0, image=self.update_img,
                                     compound=tk.TOP, command=self.open_update_dialog)
         btn_edit_dialog.pack(side=tk.RIGHT)
 
-        self.delete_img = tk.PhotoImage(file='assets/images/delete.gif')
-        btn_delete = tk.Button(toolbar, text='Удалить объявление', bg='#d7d8e0', bd=0, image=self.delete_img,
-                               compound=tk.TOP, command=self.delete_records)
-        btn_delete.pack(side=tk.RIGHT)
-
-        self.search_img = tk.PhotoImage(file='assets/images/search.gif')
-        btn_search = tk.Button(toolbar, text='          Поиск         ', bg='#d7d8e0', bd=0, image=self.search_img,
-                               compound=tk.TOP, command=self.open_search_dialog)
-        btn_search.pack(side=tk.RIGHT)
+        self.add_img = tk.PhotoImage(file='assets/images/add.gif')
+        btn_open_dialog = tk.Button(toolbar, text='Добавить объявление', command=self.open_dialog, bg='#d7d8e0', bd=0,
+                                    compound=tk.TOP, image=self.add_img)
+        btn_open_dialog.pack(side=tk.RIGHT)
 
         self.refresh_img = tk.PhotoImage(file='assets/images/refresh.gif')
-        btn_refresh = tk.Button(toolbar, text='           Обновить          ', bg='#d7d8e0', bd=0, image=self.refresh_img,
+        btn_refresh = tk.Button(toolbar, text='Обновить', bg='#d7d8e0', bd=0, image=self.refresh_img,
                                 compound=tk.TOP, command=self.view_records)
-        btn_refresh.pack(side=tk.RIGHT)
+        btn_refresh.place(x=math.floor(root.winfo_screenwidth() * 0.655))
+
+        self.search_img = tk.PhotoImage(file='assets/images/search.gif')
+        btn_search = tk.Button(toolbar, text='Поиск', bg='#d7d8e0', bd=0, image=self.search_img,
+                               compound=tk.TOP, command=self.open_search_dialog)
+        btn_search.place(x=math.floor(root.winfo_screenwidth() * 0.58))
+
 
         self.tree = ttk.Treeview(self, columns=('ID', 'description', 'costs', 'total'), displaycolumns=('ID', 'costs', 'total', 'description'), show='headings', height=150)
 
@@ -68,8 +71,15 @@ class Main(tk.Frame):
         usermenu.add_command(label='Профиль')
         usermenu.add_command(label='Сменить Пользователя', command=self.change_user)
 
+        usertype = Menu(mainmenu, tearoff=0)
+        usertype.add_command(label='Добавить',command=self.open_dialog)
+        usertype.add_command(label='Редактировать',command=self.open_update_dialog)
+        usertype.add_command(label='Удалить',command=self.delete_records)
+        usertype.add_command(label='Поиск',command=self.open_search_dialog)
+
         mainmenu.add_cascade(label='Пользователь', menu=usermenu)
         mainmenu.add_command(label='О программе', command=self.info)
+        mainmenu.add_cascade(label='Функции',menu=usertype)
 
 
         self.tree.pack(side=tk.LEFT)

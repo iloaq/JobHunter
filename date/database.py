@@ -1,21 +1,24 @@
+from asyncio.windows_events import NULL
 import sqlite3
+import datetime
+
 
 class DB:
     def __init__(self):
-        self.conn = sqlite3.connect('finance.db')
+        self.conn = sqlite3.connect('jobhunter.db')
         self.c = self.conn.cursor()
         self.c.execute(
-            '''CREATE TABLE IF NOT EXISTS finance (id integer primary key, description text, costs text, total real)''')
+            '''CREATE TABLE IF NOT EXISTS posts(id integer primary key, id_user int, type int, contacts text, description text, payment text, publication_date date, completion_date date, status boolean)''')
         self.c.execute(
-            '''CREATE TABLE IF NOT EXISTS Users (id integer primary key, login text, password text)''')
+            '''CREATE TABLE IF NOT EXISTS users(id integer primary key, login text, password text, type text, description text)''')
         self.conn.commit()
 
-    def insert_data(self, description, costs, total):
-        self.c.execute('''INSERT INTO finance(description, costs, total) VALUES (?, ?, ?)''',
-                       (description, costs, total))
+    def insert_data(self, id_user, type, contacts, description, payment):
+        self.c.execute('''INSERT INTO posts(id_user, type, contacts, description, payment, publication_date, completion_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (id_user, type, contacts, description, payment, datetime.datetime.now(), NULL, True))
         self.conn.commit()
     
-    def insert_users(self,login,password):
-        self.c.execute('''INSERT INTO Users(login, password) VALUES (?, ?)''',
-                       (login, password))
+    def insert_users(self,login,password, type, description):
+        self.c.execute('''INSERT INTO Users(login, password, type, description) VALUES (?, ?, ?, ?)''',
+                       (login, password, type, description))
         self.conn.commit()
