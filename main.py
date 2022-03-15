@@ -8,6 +8,7 @@ from turtle import width
 from date.database import DB
 
 
+# Основной класс где содержится все функции главного меню
 class Main(tk.Frame):
     def __init__(self, root):
         super().__init__(root)
@@ -16,7 +17,7 @@ class Main(tk.Frame):
         self.view_records()
 
     def init_main(self):
-        toolbar = tk.Frame(bg='#d7d8e0', bd=2)
+        toolbar = tk.Frame(bg='#d7d8e0', bd=2) #Создарние фрейма с заливкой, шириной и выравниванием
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
         self.add_logo = tk.PhotoImage(file='assets/images/logo.gif')
@@ -52,24 +53,23 @@ class Main(tk.Frame):
 
         self.tree = ttk.Treeview(self, columns=('ID', 'description', 'costs', 'total'), displaycolumns=('ID', 'costs', 'total', 'description'), show='headings', height=150)
 
-        self.tree.column('ID', width=math.floor(root.winfo_screenwidth() * 0.01), anchor=tk.CENTER)
+        self.tree.column('ID', width=math.floor(root.winfo_screenwidth() * 0.01), anchor=tk.CENTER)             #Тут мы задаем ширину столбцов через вычисление ширины дисплея
         self.tree.column('description', width=math.floor(root.winfo_screenwidth() * 0.693), anchor=tk.CENTER)
         self.tree.column('costs', width=math.floor(root.winfo_screenwidth() * 0.09), anchor=tk.CENTER)
         self.tree.column('total', width=math.floor(root.winfo_screenwidth() * 0.2), anchor=tk.CENTER)
 
-        self.tree.heading('ID', text='ID')
+        self.tree.heading('ID', text='ID')                           #Верхние строки таблицы
         self.tree.heading('description', text='Описание')
         self.tree.heading('costs', text='Тип')
         self.tree.heading('total', text='Контактные данные')
 
-        root.update()
 
-        mainmenu = Menu(root)
+        mainmenu = Menu(root)         #Создание меню 
         root.config(menu=mainmenu)
 
         usermenu = Menu(mainmenu, tearoff=0)
         usermenu.add_command(label='Профиль')
-        usermenu.add_command(label='Сменить Пользователя', command=self.change_user)
+        usermenu.add_command(label='Сменить Пользователя', command=self.change_user) # тут мы для Пользователя добавляем 2 лейбла с функциями
 
         usertype = Menu(mainmenu, tearoff=0)
         usertype.add_command(label='Добавить',command=self.open_dialog)
@@ -84,17 +84,17 @@ class Main(tk.Frame):
 
         self.tree.pack(side=tk.LEFT)
 
-        scroll = tk.Scrollbar(self, command=self.tree.yview)
+        scroll = tk.Scrollbar(self, command=self.tree.yview) #Скролл для таблицы с вызовом команды скрола
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.tree.configure(yscrollcommand=scroll.set)
 
 
 
-    def records(self, description, costs, total):
+    def records(self, description, costs, total):                         #тут мы имеем обращение к базе данных дл вставки в таблицу наших переменных
         self.db.insert_data(description, costs, total)
         self.view_records()
 
-    def update_record(self, description, costs, total):
+    def update_record(self, description, costs, total):                                                      
         self.db.c.execute('''UPDATE finance SET description=?, costs=?, total=? WHERE ID=?''',
                           (description, costs, total, self.tree.set(self.tree.selection()[0], '#1')))
         self.db.conn.commit()
@@ -117,6 +117,7 @@ class Main(tk.Frame):
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]
 
+        #вызов дочерних классов
     def open_dialog(self):
         Child()
 
@@ -132,6 +133,8 @@ class Main(tk.Frame):
     def info(self):
         info()
 
+
+        #Дочерний класс где мы имеем создание окна так же лейбл, ввод данных, комбобох
 
 class Child(tk.Toplevel):
     def __init__(self):
