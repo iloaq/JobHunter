@@ -489,8 +489,7 @@ class stat1(tk.Toplevel):
         df2.plot(kind='line', legend=True, ax=ax2, color='r', marker='o', fontsize=10)
         ax2.set_title('Средняя зарплата')
 
-        vals = [24, 17, 53, 21, 35]
-        labels = ["Ford", "Toyota", "BMV", "AUDI", "Jaguar"]
+      
         
 
 
