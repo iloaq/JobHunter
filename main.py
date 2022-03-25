@@ -12,6 +12,7 @@ import datetime
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pandas as pd
 
 type=2
 
@@ -133,7 +134,7 @@ class Main(tk.Frame):
         usertype.add_command(label='Поиск',command=self.open_search_dialog)
 
         stat = Menu(mainmenu, tearoff=0)
-        stat.add_command(label='Диаграмма1',command=self.stat_1)
+        stat.add_command(label='Диаграммы',command=self.stat_1)
 
         mainmenu.add_cascade(label='Пользователь', menu=usermenu)
         mainmenu.add_cascade(label='Функции', menu=usertype)
@@ -226,7 +227,7 @@ class Child(tk.Toplevel):
 
     def init_child(self):
         self.title('Добавить объявление')
-        self.geometry('1000x820+400+300')
+        self.geometry('400x400+400+300')
         self.resizable(False, False)
 
         label_description = tk.Label(self, text='Имя')
@@ -287,7 +288,7 @@ class Update(Child):
     def init_edit(self):
         self.title('Редактировать объявление')
         btn_edit = ttk.Button(self, text='Редактировать')
-        btn_edit.place(x=205, y=170)
+        btn_edit.place(x=205, y=300)
         btn_edit.bind('<Button-1>', lambda event: self.view.update_record(self.entry_id_user.get(),
                                                                           self.combobox.get(),
                                                                           self.entry_contacts.get(),
@@ -347,6 +348,10 @@ class login(tk.Toplevel):
         label_description.place(x=50, y=50)
         label_sum = tk.Label(self, text='Пароль')
         label_sum.place(x=50, y=80)
+        label_type = tk.Label(self, text='Тип')
+        label_type.place(x=50, y=110)
+        label_dis = tk.Label(self, text='О себе')
+        label_dis.place(x=50, y=140)
 
         self.entry_login = ttk.Entry(self)
         self.entry_login.place(x=200, y=50)
@@ -386,7 +391,7 @@ class loginin(tk.Toplevel):
 
 
     def init_loginin(self, textt=0):
-        self.title('Регистрация')
+        self.title('Авторизация')
         self.geometry('400x220+400+300')
         self.resizable(False, False)
 
@@ -403,8 +408,8 @@ class loginin(tk.Toplevel):
         self.entry_password = ttk.Entry(self, show="*")
         self.entry_password.place(x=200, y=80)
 
-        btn_login = ttk.Button(self, text='reg', command=self.register)
-        btn_login.place(x=140, y=170)
+        btn_login = ttk.Button(self, text='Регистрация', command=self.register)
+        btn_login.place(x=100, y=170)
 
         btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
         btn_cancel.place(x=300, y=170)
@@ -479,21 +484,14 @@ class stat1(tk.Toplevel):
         figure2 = plt.Figure(figsize=(5, 4), dpi=100)
         ax2 = figure2.add_subplot(111)
         line2 = FigureCanvasTkAgg(figure2, root)
-        line2.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+        line2.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH)
         df2 = df2[['Неделя', 'ЗП']].groupby('Неделя').sum()
         df2.plot(kind='line', legend=True, ax=ax2, color='r', marker='o', fontsize=10)
         ax2.set_title('Средняя зарплата')
 
-        figure3 = plt.Figure(figsize=(5, 4), dpi=100)
-        ax3 = figure3.add_subplot(111)
-        ax3.scatter(df3['Interest_Rate'], df3['Stock_Index_Price'], color='g')
-        scatter3 = FigureCanvasTkAgg(figure3, root)
-        scatter3.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-        ax3.legend(['Stock_Index_Price'])
-        ax3.set_xlabel('Interest Rate')
-        ax3.set_title('Interest Rate Vs. Stock Index Price')
-
-        root.mainloop()
+        vals = [24, 17, 53, 21, 35]
+        labels = ["Ford", "Toyota", "BMV", "AUDI", "Jaguar"]
+        
 
 
 
