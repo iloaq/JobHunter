@@ -193,7 +193,7 @@ class Main(tk.Frame):
 
     def search_records(self, description):
         description = ('%' + description + '%',)
-        self.db.c.execute('''SELECT * FROM posts WHERE description LIKE ?''', description)
+        self.db.c.execute('''SELECT id_user, type, contacts, description, payment, publication_date FROM posts WHERE description LIKE ?''', description)
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]
 
@@ -489,7 +489,8 @@ class stat1(tk.Toplevel):
         df2.plot(kind='line', legend=True, ax=ax2, color='r', marker='o', fontsize=10)
         ax2.set_title('Средняя зарплата')
 
-      
+        vals = [24, 17, 53, 21, 35]
+        labels = ["Ford", "Toyota", "BMV", "AUDI", "Jaguar"]
         
 
 
