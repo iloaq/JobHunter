@@ -6,6 +6,15 @@ from tkinter import Menu, ttk
 from tkinter.messagebox import NO
 from turtle import width
 from date.database import DB
+import matplotlib
+
+matplotlib.use('TkAgg')
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg,
+    NavigationToolbar2Tk
+)
 
 
 # Основной класс где содержится все функции главного меню
@@ -76,11 +85,14 @@ class Main(tk.Frame):
         usertype.add_command(label='Редактировать',command=self.open_update_dialog)
         usertype.add_command(label='Удалить',command=self.delete_records)
         usertype.add_command(label='Поиск',command=self.open_search_dialog)
+        usertype.add_command(label='Статистика',command=self.stat)
+        usertype.add_command(label='Выход',command=self.exit)
+
 
         mainmenu.add_cascade(label='Пользователь', menu=usermenu)
         mainmenu.add_command(label='О программе', command=self.info)
         mainmenu.add_cascade(label='Функции',menu=usertype)
-
+        
 
         self.tree.pack(side=tk.LEFT)
 
@@ -89,6 +101,11 @@ class Main(tk.Frame):
         self.tree.configure(yscrollcommand=scroll.set)
 
 
+    def stat(self):
+        stat()
+
+    def exit(self):
+        self.quit()
 
     def records(self, description, costs, total):                         #тут мы имеем обращение к базе данных дл вставки в таблицу наших переменных
         self.db.insert_data(description, costs, total)
@@ -160,7 +177,7 @@ class Child(tk.Toplevel):
         self.entry_money = ttk.Entry(self)
         self.entry_money.place(x=200, y=110)
 
-        self.combobox = ttk.Combobox(self, values=[u'Вакансия', u'Исполнитель'])
+        self.combobox = ttk.Combobox(self, values=[u'Работодатель', u'Исполнитель'])
         self.combobox.current(0)
         self.combobox.place(x=200, y=80)
 
@@ -283,6 +300,58 @@ class info(tk.Toplevel):
 
         label_name_group= tk.Label(self, text="Кальяскаров Арман АПО-19\n Тарасюк Андрей АПО-19\n Исенгужин Роман АПО-19\n Селимгерей Нурболат АПО-19")
         label_name_group.place(x=10, y= 110)
+
+class stat(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+    def stat1(self):
+        self.title('Статистика')
+
+        data = {'Подали':17, 'Нашли': 7,'Еще в поиске':10}
+
+        # подключение бд
+        
+
+        languages = data.keys()
+        popularity = data.values()
+
+        # создание фигуры
+        figure = Figure(figsize=(6, 4), dpi=100)
+
+        # создание FigureCanvasTkAgg object
+        figure_canvas = FigureCanvasTkAgg(figure, self)
+
+        # панель иструментов статистики
+        # NavigationToolbar2Tk(figure_canvas, self)
+
+        # create axes
+        axes = figure.add_subplot()
+
+        # create the barchart
+        axes.bar(languages, popularity)
+        axes.set_title('Отношение')
+        axes.set_ylabel('Количество')
+
+        figure_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+
+    def stat2(self):    
+        frameChartsLT = tk.Frame(self)
+        frameChartsLT.pack()
+
+        stockListExp = ['Работодатели' , 'Исполнители']
+        stockSplitExp = [15,7]
+
+        fig = Figure() # create a figure object
+        ax = fig.add_subplot() # add an Axes to the figure
+
+        ax.pie(stockSplitExp,  wedgeprops=dict(width=0.5), labels=stockListExp,)
+
+        chart1 = FigureCanvasTkAgg(fig,frameChartsLT)
+        chart1.get_tk_widget().pack()
+
+
 
 if __name__ == "__main__":
     root = tk.Tk()
